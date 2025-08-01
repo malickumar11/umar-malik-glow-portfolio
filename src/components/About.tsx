@@ -73,8 +73,8 @@ const About = () => {
                 className="neu-card p-6 group cursor-pointer"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="mb-4 p-3 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 w-fit group-hover:scale-110 transition-transform duration-300">
-                  <service.icon className="w-6 h-6 text-primary" />
+                <div className="mb-4 p-3 rounded-xl bg-white/10 w-fit group-hover:scale-110 transition-transform duration-300">
+                  <service.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
                   {service.title}

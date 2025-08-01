@@ -86,8 +86,8 @@ const Contact = () => {
                   className="block p-6 neu-card group cursor-pointer"
                 >
                   <div className="flex items-center space-x-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 group-hover:scale-110 transition-transform duration-300">
-                      <method.icon className="w-6 h-6 text-primary" />
+                    <div className="p-3 rounded-xl bg-white/10 group-hover:scale-110 transition-transform duration-300">
+                      <method.icon className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <h4 className="font-semibold group-hover:text-primary transition-colors">

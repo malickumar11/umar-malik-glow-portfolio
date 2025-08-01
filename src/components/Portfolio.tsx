@@ -101,7 +101,7 @@ const Portfolio = () => {
                   <div className="neu-card overflow-hidden">
                     {/* Project Image */}
                     <div className="relative overflow-hidden">
-                      <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                      <div className="aspect-video bg-white/5 flex items-center justify-center">
                         <div className="text-6xl opacity-20">🎨</div>
                       </div>
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -112,7 +112,7 @@ const Portfolio = () => {
                     {/* Project Info */}
                     <div className="p-6">
                       <div className="flex items-center gap-2 mb-3">
-                        <span className="text-xs px-2 py-1 rounded-full bg-primary/20 text-primary">
+                        <span className="text-xs px-2 py-1 rounded-full bg-white/20 text-white">
                           {project.category}
                         </span>
                         <span className="text-xs text-muted-foreground">

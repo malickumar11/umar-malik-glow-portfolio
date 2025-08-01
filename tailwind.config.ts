@@ -57,7 +57,6 @@ export default {
 				},
 				glow: {
 					primary: 'hsl(var(--glow-primary))',
-					accent: 'hsl(var(--glow-accent))',
 					soft: 'hsl(var(--glow-soft))'
 				}
 			},

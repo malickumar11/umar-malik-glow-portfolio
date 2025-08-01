@@ -47,8 +47,8 @@ const Hero = () => {
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
       {/* Background Glow Effects */}
-      <div className="absolute inset-0 bg-gradient-radial from-primary/20 via-transparent to-transparent opacity-50"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute inset-0 bg-gradient-radial from-white/10 via-transparent to-transparent opacity-50"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-float"></div>
       
       <div className="container mx-auto px-6 text-center relative z-10">
         {/* Profile Image */}
@@ -62,7 +62,7 @@ const Hero = () => {
               />
             </div>
             {/* Glow effect behind image */}
-            <div className="absolute inset-0 w-32 h-32 mx-auto rounded-full bg-gradient-to-r from-primary/30 to-accent/30 blur-xl -z-10 animate-glow-pulse"></div>
+            <div className="absolute inset-0 w-32 h-32 mx-auto rounded-full bg-white/20 blur-xl -z-10 animate-glow-pulse"></div>
             {/* Sparkle effect */}
             <div className="absolute -top-2 -right-2 w-6 h-6 text-accent animate-bounce">
               ✨
@@ -74,9 +74,7 @@ const Hero = () => {
         <div className="mb-6 animate-fade-in">
           <h1 className="text-6xl md:text-8xl font-bold mb-4">
             <span className="text-glow">Hi, I'm </span>
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Umar
-            </span>
+            <span className="text-glow">Umar</span>
           </h1>
         </div>
 
