@@ -14,7 +14,116 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      project_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          brand_name: string | null
+          category_id: string
+          code_url: string | null
+          created_at: string
+          demo_url: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          instagram_url: string | null
+          is_featured: boolean | null
+          metadata: Json | null
+          title: string
+          updated_at: string
+          youtube_views: number | null
+        }
+        Insert: {
+          brand_name?: string | null
+          category_id: string
+          code_url?: string | null
+          created_at?: string
+          demo_url?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          instagram_url?: string | null
+          is_featured?: boolean | null
+          metadata?: Json | null
+          title: string
+          updated_at?: string
+          youtube_views?: number | null
+        }
+        Update: {
+          brand_name?: string | null
+          category_id?: string
+          code_url?: string | null
+          created_at?: string
+          demo_url?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          instagram_url?: string | null
+          is_featured?: boolean | null
+          metadata?: Json | null
+          title?: string
+          updated_at?: string
+          youtube_views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "project_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
