@@ -44,26 +44,6 @@ const Portfolio = () => {
     image: '/api/placeholder/400/300',
     demoUrl: '#',
     codeUrl: '#'
-  }, {
-    id: 5,
-    title: 'Brand Identity System',
-    category: 'Branding',
-    date: 'Oct 2024',
-    description: 'Complete brand identity system including logo design, color palette, typography, and brand guidelines.',
-    tags: ['Illustrator', 'Photoshop', 'InDesign'],
-    image: '/api/placeholder/400/300',
-    demoUrl: '#',
-    codeUrl: '#'
-  }, {
-    id: 6,
-    title: 'AI Productivity App',
-    category: 'UI/UX Design',
-    date: 'Oct 2024',
-    description: 'Modern AI-powered productivity app interface with smart automation features and clean user experience.',
-    tags: ['Figma', 'Principle', 'AI/UX'],
-    image: '/api/placeholder/400/300',
-    demoUrl: '#',
-    codeUrl: '#'
   }];
   return <section id="work" className="py-20">
       <div className="container mx-auto px-6">
@@ -174,6 +154,16 @@ const Portfolio = () => {
                 </div>
               </DialogContent>
             </Dialog>)}
+        </div>
+
+        {/* View All Button */}
+        <div className="text-center mt-16">
+          <Button 
+            className="glow-button"
+            onClick={() => window.location.href = '/portfolio'}
+          >
+            View All Projects
+          </Button>
         </div>
       </div>
     </section>;

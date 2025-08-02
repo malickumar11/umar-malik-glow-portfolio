@@ -41,14 +41,14 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email Me',
-      description: 'umar@malickumar.com',
-      action: 'mailto:umar@malickumar.com'
+      description: 'contact@malickumar.com',
+      action: 'mailto:contact@malickumar.com'
     },
     {
       icon: MessageCircle,
       title: 'WhatsApp',
-      description: 'Quick response guaranteed',
-      action: '#'
+      description: '+91 9596831195',
+      action: 'https://api.whatsapp.com/send/?phone=919596831195&text=Hi%2C+I+found+your+profile+and+would+like+to+know+more+about+your+services&type=phone_number&app_absent=0'
     }
   ];
 

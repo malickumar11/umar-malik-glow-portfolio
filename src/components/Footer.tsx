@@ -44,9 +44,17 @@ const Footer = () => {
         
         {/* Bottom Text */}
         <div className="mt-8 pt-8 border-t border-white/10 text-center">
-          <p className="text-sm text-muted-foreground">
-            Let's Build Something
-          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <p className="text-sm text-muted-foreground">
+              Let's Build Something
+            </p>
+            <a 
+              href="/admin" 
+              className="text-xs text-muted-foreground hover:text-primary transition-colors opacity-50 hover:opacity-100"
+            >
+              Admin Access
+            </a>
+          </div>
         </div>
       </div>
     </footer>
