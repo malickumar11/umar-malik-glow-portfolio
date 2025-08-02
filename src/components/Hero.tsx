@@ -54,15 +54,15 @@ const Hero = () => {
         {/* Profile Image */}
         <div className="mb-8 animate-fade-in">
           <div className="relative inline-block">
-            <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-white/20 shadow-2xl animate-glow-pulse">
+            <div className="w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-white/20 shadow-2xl animate-glow-pulse">
               <img 
-                src={profileImage} 
+                src="/lovable-uploads/85be163a-97a5-4243-9be0-6edf47367471.png" 
                 alt="Umar Malik" 
                 className="w-full h-full object-cover"
               />
             </div>
             {/* Glow effect behind image */}
-            <div className="absolute inset-0 w-32 h-32 mx-auto rounded-full bg-white/20 blur-xl -z-10 animate-glow-pulse"></div>
+            <div className="absolute inset-0 w-40 h-40 mx-auto rounded-full bg-white/20 blur-xl -z-10 animate-glow-pulse"></div>
             {/* Sparkle effect */}
             <div className="absolute -top-2 -right-2 w-6 h-6 text-accent animate-bounce">
               ✨
