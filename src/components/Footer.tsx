@@ -46,14 +46,22 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-white/10 text-center">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <p className="text-sm text-muted-foreground">
-              Let's Build Something
+              Let's Build Something Amazing
             </p>
-            <a 
-              href="/admin" 
-              className="text-xs text-muted-foreground hover:text-primary transition-colors opacity-50 hover:opacity-100"
-            >
-              Admin Access
-            </a>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => window.location.href = '/admin-signup'}
+                className="text-xs text-muted-foreground hover:text-primary transition-colors opacity-50 hover:opacity-100"
+              >
+                Admin Setup
+              </button>
+              <button 
+                onClick={() => window.location.href = '/admin-login'}
+                className="text-xs text-muted-foreground hover:text-primary transition-colors opacity-50 hover:opacity-100"
+              >
+                Admin Login
+              </button>
+            </div>
           </div>
         </div>
       </div>
