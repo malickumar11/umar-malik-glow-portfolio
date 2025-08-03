@@ -10,7 +10,7 @@ const Hero = () => {
   
   const texts = [
     'UI/UX Designer',
-    '3D Creator', 
+    'Brand Designer', 
     'AI Visionary',
     'Digital Innovator'
   ];
@@ -96,7 +96,7 @@ const Hero = () => {
           <div className="flex flex-wrap justify-center gap-4 text-muted-foreground">
             <span>UI/UX</span>
             <span>|</span>
-            <span>3D Design</span>
+            <span>Brand Design</span>
             <span>|</span>
             <span>Branding</span>
             <span>|</span>
@@ -133,9 +133,9 @@ const Hero = () => {
             size="lg" 
             variant="outline" 
             className="glass-card border-white/20 px-8 py-3 text-lg"
-            onClick={() => scrollToSection('contact')}
+            onClick={() => window.open('/resume.pdf', '_blank')}
           >
-            Hire Me
+            Download Resume
           </Button>
         </div>
 

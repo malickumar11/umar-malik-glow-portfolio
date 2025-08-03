@@ -25,7 +25,7 @@ const AdminLogin = () => {
           .single();
         
         if (profile?.role === 'admin') {
-          window.location.href = '/portfolio';
+          window.location.href = '/admin';
         }
       }
     };
@@ -60,7 +60,7 @@ const AdminLogin = () => {
           title: "Success",
           description: "Welcome back, Admin!"
         });
-        window.location.href = '/portfolio';
+        window.location.href = '/admin';
       } else {
         toast({
           title: "Access Denied",
@@ -128,11 +128,6 @@ const AdminLogin = () => {
             </Button>
           </form>
           
-          <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
-            <p className="text-xs text-muted-foreground mb-2">Demo Credentials:</p>
-            <p className="text-xs text-white/70">Email: malickirfan00@gmail.com</p>
-            <p className="text-xs text-white/70">Password: Irfan@123#13</p>
-          </div>
         </CardContent>
       </Card>
     </div>

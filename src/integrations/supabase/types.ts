@@ -69,6 +69,7 @@ export type Database = {
         Row: {
           brand_name: string | null
           category_id: string
+          client_name: string | null
           code_url: string | null
           created_at: string
           demo_url: string | null
@@ -78,6 +79,10 @@ export type Database = {
           instagram_url: string | null
           is_featured: boolean | null
           metadata: Json | null
+          project_date: string | null
+          show_on_home: boolean | null
+          social_links: Json | null
+          thumbnail_url: string | null
           title: string
           updated_at: string
           youtube_views: number | null
@@ -85,6 +90,7 @@ export type Database = {
         Insert: {
           brand_name?: string | null
           category_id: string
+          client_name?: string | null
           code_url?: string | null
           created_at?: string
           demo_url?: string | null
@@ -94,6 +100,10 @@ export type Database = {
           instagram_url?: string | null
           is_featured?: boolean | null
           metadata?: Json | null
+          project_date?: string | null
+          show_on_home?: boolean | null
+          social_links?: Json | null
+          thumbnail_url?: string | null
           title: string
           updated_at?: string
           youtube_views?: number | null
@@ -101,6 +111,7 @@ export type Database = {
         Update: {
           brand_name?: string | null
           category_id?: string
+          client_name?: string | null
           code_url?: string | null
           created_at?: string
           demo_url?: string | null
@@ -110,6 +121,10 @@ export type Database = {
           instagram_url?: string | null
           is_featured?: boolean | null
           metadata?: Json | null
+          project_date?: string | null
+          show_on_home?: boolean | null
+          social_links?: Json | null
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string
           youtube_views?: number | null
@@ -123,6 +138,72 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      reviews: {
+        Row: {
+          client_image: string | null
+          client_name: string
+          created_at: string
+          id: string
+          is_featured: boolean | null
+          project_type: string | null
+          rating: number | null
+          review_text: string
+          updated_at: string
+        }
+        Insert: {
+          client_image?: string | null
+          client_name: string
+          created_at?: string
+          id?: string
+          is_featured?: boolean | null
+          project_type?: string | null
+          rating?: number | null
+          review_text: string
+          updated_at?: string
+        }
+        Update: {
+          client_image?: string | null
+          client_name?: string
+          created_at?: string
+          id?: string
+          is_featured?: boolean | null
+          project_type?: string | null
+          rating?: number | null
+          review_text?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_featured: boolean | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_featured?: boolean | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_featured?: boolean | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
