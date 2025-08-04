@@ -111,6 +111,8 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const checkAdmin = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -118,16 +120,12 @@ const AdminDashboard = () => {
       return;
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single();
-
-    if (profile?.role !== 'admin') {
-      window.location.href = '/';
+    if (user.email !== 'malickirfan00@gmail.com') {
+      window.location.href = '/admin-login';
       return;
     }
+
+    setIsAdmin(true);
   };
 
   const fetchData = async () => {

@@ -17,16 +17,8 @@ const AdminLogin = () => {
     // Check if already logged in
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', user.id)
-          .single();
-        
-        if (profile?.role === 'admin') {
-          window.location.href = '/admin';
-        }
+      if (user && user.email === 'malickirfan00@gmail.com') {
+        window.location.href = '/admin';
       }
     };
     checkAuth();
@@ -48,14 +40,8 @@ const AdminLogin = () => {
         variant: "destructive"
       });
     } else if (data.user) {
-      // Check if user is admin
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', data.user.id)
-        .single();
-      
-      if (profile?.role === 'admin') {
+      // Check if user is admin by email
+      if (data.user.email === 'malickirfan00@gmail.com') {
         toast({
           title: "Success",
           description: "Welcome back, Admin!"
