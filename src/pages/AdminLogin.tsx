@@ -148,6 +148,14 @@ const AdminLogin = () => {
             </Button>
           </form>
           
+          {/* Hidden admin setup - only show for admin email */}
+          {email === 'malickirfan00@gmail.com' && (
+            <div className="mt-4 text-center">
+              <p className="text-xs text-muted-foreground">
+                If account doesn't exist, it will be created automatically
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
