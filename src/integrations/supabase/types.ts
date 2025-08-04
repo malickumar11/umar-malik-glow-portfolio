@@ -76,11 +76,13 @@ export type Database = {
           description: string | null
           id: string
           image_url: string | null
+          images: Json | null
           instagram_url: string | null
           is_featured: boolean | null
           metadata: Json | null
           project_date: string | null
           show_on_home: boolean | null
+          social_date: string | null
           social_links: Json | null
           thumbnail_url: string | null
           title: string
@@ -97,11 +99,13 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          images?: Json | null
           instagram_url?: string | null
           is_featured?: boolean | null
           metadata?: Json | null
           project_date?: string | null
           show_on_home?: boolean | null
+          social_date?: string | null
           social_links?: Json | null
           thumbnail_url?: string | null
           title: string
@@ -118,11 +122,13 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          images?: Json | null
           instagram_url?: string | null
           is_featured?: boolean | null
           metadata?: Json | null
           project_date?: string | null
           show_on_home?: boolean | null
+          social_date?: string | null
           social_links?: Json | null
           thumbnail_url?: string | null
           title?: string

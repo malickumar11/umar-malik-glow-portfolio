@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Edit, Trash2, Eye, EyeOff, Home, Grid } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, Home, Grid, Upload, X } from 'lucide-react';
 
 interface Project {
   id: string;
@@ -22,8 +22,10 @@ interface Project {
   brand_name?: string;
   client_name?: string;
   project_date?: string;
-  social_links?: any;
+  social_date?: string;
+  social_links?: Record<string, any>;
   thumbnail_url?: string;
+  images?: string[];
   show_on_home: boolean;
   is_featured: boolean;
   category_id: string;
@@ -83,12 +85,17 @@ const AdminDashboard = () => {
     brand_name: '',
     client_name: '',
     project_date: '',
+    social_date: '',
     social_links: {},
     thumbnail_url: '',
     category_id: '',
+    images: [] as string[],
     show_on_home: false,
     is_featured: false
   });
+
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   const [newService, setNewService] = useState({
     title: '',
@@ -157,7 +164,11 @@ const AdminDashboard = () => {
         variant: "destructive"
       });
     } else {
-      setProjects(data || []);
+      setProjects((data || []).map(project => ({
+        ...project,
+        social_links: (typeof project.social_links === 'object' && project.social_links !== null) ? project.social_links : {},
+        images: Array.isArray(project.images) ? project.images.map(String) : []
+      })) as Project[]);
     }
   };
 
@@ -281,12 +292,169 @@ const AdminDashboard = () => {
       brand_name: '',
       client_name: '',
       project_date: '',
+      social_date: '',
       social_links: {},
       thumbnail_url: '',
       category_id: '',
+      images: [],
       show_on_home: false,
       is_featured: false
     });
+    setSelectedCategory(null);
+  };
+
+  const handleImageUpload = async (files: FileList) => {
+    if (!files.length) return;
+    
+    setUploadingImages(true);
+    const uploadedUrls: string[] = [];
+    
+    try {
+      for (const file of Array.from(files)) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('project-images')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const { data } = supabase.storage
+          .from('project-images')
+          .getPublicUrl(filePath);
+
+        uploadedUrls.push(data.publicUrl);
+      }
+
+      setNewProject({
+        ...newProject,
+        images: [...newProject.images, ...uploadedUrls]
+      });
+
+      toast({
+        title: "Success",
+        description: `${uploadedUrls.length} image(s) uploaded successfully`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to upload images",
+        variant: "destructive"
+      });
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setNewProject({
+      ...newProject,
+      images: newProject.images.filter((_, index) => index !== indexToRemove)
+    });
+  };
+
+  const getCategorySpecificFields = () => {
+    if (!selectedCategory) return null;
+
+    const commonSocialFields = (
+      <div className="space-y-4">
+        <h4 className="text-white font-semibold">Social Media Links</h4>
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            placeholder="Instagram URL"
+            value={newProject.instagram_url}
+            onChange={(e) => setNewProject({...newProject, instagram_url: e.target.value})}
+          />
+          <Input
+            placeholder="YouTube Views"
+            type="number"
+            value={newProject.youtube_views}
+            onChange={(e) => setNewProject({...newProject, youtube_views: parseInt(e.target.value) || 0})}
+          />
+        </div>
+        <Input
+          type="datetime-local"
+          placeholder="Social Date"
+          value={newProject.social_date}
+          onChange={(e) => setNewProject({...newProject, social_date: e.target.value})}
+        />
+      </div>
+    );
+
+    switch (selectedCategory.slug) {
+      case 'graphic-design':
+        return (
+          <div className="space-y-4">
+            {commonSocialFields}
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                placeholder="Client Name"
+                value={newProject.client_name}
+                onChange={(e) => setNewProject({...newProject, client_name: e.target.value})}
+              />
+              <Input
+                placeholder="Brand Name"
+                value={newProject.brand_name}
+                onChange={(e) => setNewProject({...newProject, brand_name: e.target.value})}
+              />
+            </div>
+          </div>
+        );
+      
+      case 'website-development':
+        return (
+          <div className="space-y-4">
+            {commonSocialFields}
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                placeholder="Demo URL"
+                value={newProject.demo_url}
+                onChange={(e) => setNewProject({...newProject, demo_url: e.target.value})}
+              />
+              <Input
+                placeholder="Code URL"
+                value={newProject.code_url}
+                onChange={(e) => setNewProject({...newProject, code_url: e.target.value})}
+              />
+            </div>
+            <Input
+              placeholder="Client Name"
+              value={newProject.client_name}
+              onChange={(e) => setNewProject({...newProject, client_name: e.target.value})}
+            />
+          </div>
+        );
+      
+      case 'video-editing':
+        return (
+          <div className="space-y-4">
+            {commonSocialFields}
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                placeholder="Client Name"
+                value={newProject.client_name}
+                onChange={(e) => setNewProject({...newProject, client_name: e.target.value})}
+              />
+              <Input
+                placeholder="Video Duration (minutes)"
+                type="number"
+                value={(newProject.social_links as any)?.duration || ''}
+                onChange={(e) => setNewProject({
+                  ...newProject, 
+                  social_links: { ...newProject.social_links, duration: e.target.value }
+                })}
+              />
+            </div>
+          </div>
+        );
+      
+      default:
+        return commonSocialFields;
+    }
   };
 
   if (loading) {
@@ -486,116 +654,159 @@ const AdminDashboard = () => {
 
         {/* Add Project Dialog */}
         <Dialog open={showAddProject} onOpenChange={setShowAddProject}>
-          <DialogContent className="max-w-2xl glass-card border-white/20 max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl glass-card border-white/20 max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-white">Add New Project</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                placeholder="Project Title"
-                value={newProject.title}
-                onChange={(e) => setNewProject({...newProject, title: e.target.value})}
-              />
-              <Textarea
-                placeholder="Description"
-                value={newProject.description}
-                onChange={(e) => setNewProject({...newProject, description: e.target.value})}
-              />
-              <Select 
-                value={newProject.category_id}
-                onValueChange={(value) => setNewProject({...newProject, category_id: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  placeholder="Image URL"
-                  value={newProject.image_url}
-                  onChange={(e) => setNewProject({...newProject, image_url: e.target.value})}
-                />
-                <Input
-                  placeholder="Thumbnail URL"
-                  value={newProject.thumbnail_url}
-                  onChange={(e) => setNewProject({...newProject, thumbnail_url: e.target.value})}
-                />
+            <div className="space-y-6">
+              {/* Step 1: Category Selection */}
+              <div className="space-y-4">
+                <h3 className="text-white font-semibold">Step 1: Select Category</h3>
+                <Select 
+                  value={newProject.category_id}
+                  onValueChange={(value) => {
+                    const category = categories.find(c => c.id === value);
+                    setNewProject({...newProject, category_id: value});
+                    setSelectedCategory(category || null);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  placeholder="Demo URL"
-                  value={newProject.demo_url}
-                  onChange={(e) => setNewProject({...newProject, demo_url: e.target.value})}
-                />
-                <Input
-                  placeholder="Code URL"
-                  value={newProject.code_url}
-                  onChange={(e) => setNewProject({...newProject, code_url: e.target.value})}
-                />
-              </div>
-              <Input
-                placeholder="Instagram URL"
-                value={newProject.instagram_url}
-                onChange={(e) => setNewProject({...newProject, instagram_url: e.target.value})}
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  placeholder="Brand Name"
-                  value={newProject.brand_name}
-                  onChange={(e) => setNewProject({...newProject, brand_name: e.target.value})}
-                />
-                <Input
-                  placeholder="Client Name"
-                  value={newProject.client_name}
-                  onChange={(e) => setNewProject({...newProject, client_name: e.target.value})}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <Input
-                  type="number"
-                  placeholder="YouTube Views"
-                  value={newProject.youtube_views}
-                  onChange={(e) => setNewProject({...newProject, youtube_views: parseInt(e.target.value) || 0})}
-                />
-                <Input
-                  type="date"
-                  placeholder="Project Date"
-                  value={newProject.project_date}
-                  onChange={(e) => setNewProject({...newProject, project_date: e.target.value})}
-                />
-              </div>
-              <div className="flex gap-4 items-center">
-                <label className="flex items-center gap-2 text-white">
-                  <input
-                    type="checkbox"
-                    checked={newProject.show_on_home}
-                    onChange={(e) => setNewProject({...newProject, show_on_home: e.target.checked})}
+
+              {/* Step 2: Basic Information */}
+              {selectedCategory && (
+                <div className="space-y-4">
+                  <h3 className="text-white font-semibold">Step 2: Basic Information</h3>
+                  <Input
+                    placeholder="Project Title *"
+                    value={newProject.title}
+                    onChange={(e) => setNewProject({...newProject, title: e.target.value})}
                   />
-                  Show on Home Page
-                </label>
-                <label className="flex items-center gap-2 text-white">
-                  <input
-                    type="checkbox"
-                    checked={newProject.is_featured}
-                    onChange={(e) => setNewProject({...newProject, is_featured: e.target.checked})}
+                  <Textarea
+                    placeholder="Description"
+                    value={newProject.description}
+                    onChange={(e) => setNewProject({...newProject, description: e.target.value})}
                   />
-                  Featured Project
-                </label>
-              </div>
-              <div className="flex gap-4">
-                <Button onClick={handleAddProject} className="glow-button flex-1">
-                  Add Project
+                  <Input
+                    type="date"
+                    placeholder="Project Date"
+                    value={newProject.project_date}
+                    onChange={(e) => setNewProject({...newProject, project_date: e.target.value})}
+                  />
+                </div>
+              )}
+
+              {/* Step 3: Image Upload */}
+              {selectedCategory && (
+                <div className="space-y-4">
+                  <h3 className="text-white font-semibold">Step 3: Upload Images</h3>
+                  
+                  {/* Image Upload Area */}
+                  <div className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center">
+                    <Upload className="w-8 h-8 text-white/60 mx-auto mb-2" />
+                    <p className="text-white/60 mb-4">Upload project images</p>
+                    <Input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => e.target.files && handleImageUpload(e.target.files)}
+                      disabled={uploadingImages}
+                      className="max-w-xs mx-auto"
+                    />
+                  </div>
+
+                  {/* Uploaded Images Preview */}
+                  {newProject.images.length > 0 && (
+                    <div className="grid grid-cols-3 gap-4 mt-4">
+                      {newProject.images.map((imageUrl, index) => (
+                        <div key={index} className="relative">
+                          <img 
+                            src={imageUrl} 
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-24 object-cover rounded-lg"
+                          />
+                          <button
+                            onClick={() => removeImage(index)}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Legacy Image URLs */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      placeholder="Main Image URL (optional)"
+                      value={newProject.image_url}
+                      onChange={(e) => setNewProject({...newProject, image_url: e.target.value})}
+                    />
+                    <Input
+                      placeholder="Thumbnail URL (optional)"
+                      value={newProject.thumbnail_url}
+                      onChange={(e) => setNewProject({...newProject, thumbnail_url: e.target.value})}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Category-Specific Fields */}
+              {selectedCategory && getCategorySpecificFields()}
+
+              {/* Step 5: Display Options */}
+              {selectedCategory && (
+                <div className="space-y-4">
+                  <h3 className="text-white font-semibold">Step 5: Display Options</h3>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 text-white">
+                      <input
+                        type="checkbox"
+                        checked={newProject.show_on_home}
+                        onChange={(e) => setNewProject({...newProject, show_on_home: e.target.checked})}
+                        className="rounded"
+                      />
+                      Show on Home Page
+                    </label>
+                    <label className="flex items-center gap-2 text-white">
+                      <input
+                        type="checkbox"
+                        checked={newProject.is_featured}
+                        onChange={(e) => setNewProject({...newProject, is_featured: e.target.checked})}
+                        className="rounded"
+                      />
+                      Featured Project
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-4">
+                <Button 
+                  onClick={handleAddProject} 
+                  className="glow-button flex-1"
+                  disabled={!newProject.title || !newProject.category_id || uploadingImages}
+                >
+                  {uploadingImages ? 'Uploading...' : 'Add Project'}
                 </Button>
                 <Button 
                   variant="outline" 
-                  onClick={() => setShowAddProject(false)}
+                  onClick={() => {
+                    setShowAddProject(false);
+                    resetNewProject();
+                  }}
                   className="glass-card border-white/20 flex-1"
                 >
                   Cancel
