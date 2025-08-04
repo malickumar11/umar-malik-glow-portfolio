@@ -28,17 +28,51 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
 
+    // First try to sign in
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      toast({
-        title: "Login Failed",
-        description: error.message,
-        variant: "destructive"
-      });
+      // If login fails and it's the admin email, try to create the account
+      if (error.message.includes('Email not confirmed') && email === 'malickirfan00@gmail.com') {
+        // Try to sign up the admin user
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/admin`
+          }
+        });
+
+        if (signUpError) {
+          if (signUpError.message.includes('already registered')) {
+            toast({
+              title: "Account Exists",
+              description: "Please check your email to confirm your account, or contact support.",
+              variant: "destructive"
+            });
+          } else {
+            toast({
+              title: "Signup Failed",
+              description: signUpError.message,
+              variant: "destructive"
+            });
+          }
+        } else {
+          toast({
+            title: "Account Created",
+            description: "Admin account created successfully. Please check email for confirmation.",
+          });
+        }
+      } else {
+        toast({
+          title: "Login Failed",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
     } else if (data.user) {
       // Check if user is admin by email
       if (data.user.email === 'malickirfan00@gmail.com') {
