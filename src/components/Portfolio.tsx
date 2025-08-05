@@ -98,14 +98,24 @@ const Portfolio = () => {
                             <img 
                               src={project.image_url} 
                               alt={project.title}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const fallback = e.currentTarget.parentElement?.querySelector('.fallback-icon') as HTMLElement;
+                                if (fallback) fallback.style.display = 'flex';
+                              }}
                             />
                           ) : (
                             <div className="text-6xl opacity-20">
-                              {project.project_categories.slug === 'instagram-reels' ? '🎬' : 
-                               project.project_categories.slug === 'graphic-design' ? '🎨' : '💻'}
+                              {project.project_categories?.slug === 'instagram-reels' ? '🎬' : 
+                               project.project_categories?.slug === 'graphic-design' ? '🎨' : '💻'}
                             </div>
                           )}
+                          {/* Fallback icon when image fails to load */}
+                          <div className="fallback-icon text-6xl opacity-20 hidden items-center justify-center absolute inset-0 bg-white/5">
+                            {project.project_categories?.slug === 'instagram-reels' ? '🎬' : 
+                             project.project_categories?.slug === 'graphic-design' ? '🎨' : '💻'}
+                          </div>
                         </div>
                       </div>
 

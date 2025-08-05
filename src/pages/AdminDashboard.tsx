@@ -290,6 +290,52 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleUpdateProject = async () => {
+    if (!editingProject || !editingProject.title || !editingProject.category_id) {
+      toast({
+        title: "Error",
+        description: "Please fill in required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Clean up the project data before sending
+    const projectData = {
+      ...editingProject,
+      project_date: editingProject.project_date || null,
+      social_date: editingProject.social_date || null,
+      youtube_views: editingProject.youtube_views || null,
+      demo_url: editingProject.demo_url || null,
+      code_url: editingProject.code_url || null,
+      instagram_url: editingProject.instagram_url || null,
+      brand_name: editingProject.brand_name || null,
+      client_name: editingProject.client_name || null,
+      thumbnail_url: editingProject.thumbnail_url || null,
+      image_url: editingProject.image_url || null
+    };
+
+    const { error } = await supabase
+      .from('projects')
+      .update(projectData)
+      .eq('id', editingProject.id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update project",
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Project updated successfully"
+      });
+      setEditingProject(null);
+      fetchProjects();
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.href = '/';
@@ -828,6 +874,118 @@ const AdminDashboard = () => {
                 </Button>
               </div>
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Project Dialog */}
+        <Dialog open={!!editingProject} onOpenChange={() => setEditingProject(null)}>
+          <DialogContent className="max-w-2xl glass-card border-white/20 max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-white">Edit Project</DialogTitle>
+            </DialogHeader>
+            {editingProject && (
+              <div className="space-y-4">
+                <Input
+                  placeholder="Project Title *"
+                  value={editingProject.title}
+                  onChange={(e) => setEditingProject({...editingProject, title: e.target.value})}
+                />
+                <Textarea
+                  placeholder="Description"
+                  value={editingProject.description}
+                  onChange={(e) => setEditingProject({...editingProject, description: e.target.value})}
+                />
+                <Select 
+                  value={editingProject.category_id}
+                  onValueChange={(value) => setEditingProject({...editingProject, category_id: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    placeholder="Main Image URL"
+                    value={editingProject.image_url || ''}
+                    onChange={(e) => setEditingProject({...editingProject, image_url: e.target.value})}
+                  />
+                  <Input
+                    placeholder="Demo URL"
+                    value={editingProject.demo_url || ''}
+                    onChange={(e) => setEditingProject({...editingProject, demo_url: e.target.value})}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    placeholder="Code URL"
+                    value={editingProject.code_url || ''}
+                    onChange={(e) => setEditingProject({...editingProject, code_url: e.target.value})}
+                  />
+                  <Input
+                    placeholder="Instagram URL"
+                    value={editingProject.instagram_url || ''}
+                    onChange={(e) => setEditingProject({...editingProject, instagram_url: e.target.value})}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    placeholder="Brand Name"
+                    value={editingProject.brand_name || ''}
+                    onChange={(e) => setEditingProject({...editingProject, brand_name: e.target.value})}
+                  />
+                  <Input
+                    placeholder="Client Name"
+                    value={editingProject.client_name || ''}
+                    onChange={(e) => setEditingProject({...editingProject, client_name: e.target.value})}
+                  />
+                </div>
+                <Input
+                  type="number"
+                  placeholder="YouTube Views"
+                  value={editingProject.youtube_views || ''}
+                  onChange={(e) => setEditingProject({...editingProject, youtube_views: parseInt(e.target.value) || 0})}
+                />
+                <div className="flex gap-6">
+                  <label className="flex items-center gap-2 text-white">
+                    <input
+                      type="checkbox"
+                      checked={editingProject.show_on_home}
+                      onChange={(e) => setEditingProject({...editingProject, show_on_home: e.target.checked})}
+                      className="rounded"
+                    />
+                    Show on Home Page
+                  </label>
+                  <label className="flex items-center gap-2 text-white">
+                    <input
+                      type="checkbox"
+                      checked={editingProject.is_featured}
+                      onChange={(e) => setEditingProject({...editingProject, is_featured: e.target.checked})}
+                      className="rounded"
+                    />
+                    Featured Project
+                  </label>
+                </div>
+                <div className="flex gap-4">
+                  <Button onClick={handleUpdateProject} className="glow-button flex-1">
+                    Update Project
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setEditingProject(null)}
+                    className="glass-card border-white/20 flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </div>
