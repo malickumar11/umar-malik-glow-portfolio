@@ -233,9 +233,24 @@ const AdminDashboard = () => {
       return;
     }
 
+    // Clean up the project data before sending
+    const projectData = {
+      ...newProject,
+      project_date: newProject.project_date || null,
+      social_date: newProject.social_date || null,
+      youtube_views: newProject.youtube_views || null,
+      demo_url: newProject.demo_url || null,
+      code_url: newProject.code_url || null,
+      instagram_url: newProject.instagram_url || null,
+      brand_name: newProject.brand_name || null,
+      client_name: newProject.client_name || null,
+      thumbnail_url: newProject.thumbnail_url || null,
+      image_url: newProject.image_url || null
+    };
+
     const { error } = await supabase
       .from('projects')
-      .insert([newProject]);
+      .insert([projectData]);
 
     if (error) {
       toast({

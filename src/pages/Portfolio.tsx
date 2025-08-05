@@ -128,9 +128,20 @@ const Portfolio = () => {
       return;
     }
 
+    // Clean up the project data before sending
+    const projectData = {
+      ...newProject,
+      demo_url: newProject.demo_url || null,
+      code_url: newProject.code_url || null,
+      instagram_url: newProject.instagram_url || null,
+      brand_name: newProject.brand_name || null,
+      image_url: newProject.image_url || null,
+      youtube_views: newProject.youtube_views || null
+    };
+
     const { error } = await supabase
       .from('projects')
-      .insert([newProject]);
+      .insert([projectData]);
 
     if (error) {
       toast({
