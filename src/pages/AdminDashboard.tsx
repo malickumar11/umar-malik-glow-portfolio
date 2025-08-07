@@ -17,6 +17,7 @@ interface Project {
   image_url?: string;
   demo_url?: string;
   code_url?: string;
+  project_url?: string;
   instagram_url?: string;
   youtube_views?: number;
   brand_name?: string;
@@ -80,6 +81,7 @@ const AdminDashboard = () => {
     image_url: '',
     demo_url: '',
     code_url: '',
+    project_url: '',
     instagram_url: '',
     youtube_views: 0,
     brand_name: '',
@@ -348,6 +350,7 @@ const AdminDashboard = () => {
       image_url: '',
       demo_url: '',
       code_url: '',
+      project_url: '',
       instagram_url: '',
       youtube_views: 0,
       brand_name: '',
@@ -411,6 +414,46 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleThumbnailUpload = async (file: File) => {
+    setUploadingImages(true);
+    
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `thumbnail_${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('project-images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage
+        .from('project-images')
+        .getPublicUrl(filePath);
+
+      setNewProject({
+        ...newProject,
+        thumbnail_url: data.publicUrl
+      });
+
+      toast({
+        title: "Success",
+        description: "Thumbnail uploaded successfully"
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to upload thumbnail",
+        variant: "destructive"
+      });
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
   const removeImage = (indexToRemove: number) => {
     setNewProject({
       ...newProject,
@@ -466,11 +509,11 @@ const AdminDashboard = () => {
           </div>
         );
       
-      case 'website-development':
+          case 'website-development':
         return (
           <div className="space-y-4">
             {commonSocialFields}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <Input
                 placeholder="Demo URL"
                 value={newProject.demo_url}
@@ -480,6 +523,11 @@ const AdminDashboard = () => {
                 placeholder="Code URL"
                 value={newProject.code_url}
                 onChange={(e) => setNewProject({...newProject, code_url: e.target.value})}
+              />
+              <Input
+                placeholder="Project URL"
+                value={newProject.project_url}
+                onChange={(e) => setNewProject({...newProject, project_url: e.target.value})}
               />
             </div>
             <Input
@@ -772,10 +820,41 @@ const AdminDashboard = () => {
                 <div className="space-y-4">
                   <h3 className="text-white font-semibold">Step 3: Upload Images</h3>
                   
-                  {/* Image Upload Area */}
+                  {/* Thumbnail Upload */}
+                  <div className="space-y-2">
+                    <label className="text-white text-sm">Thumbnail (Cover Photo) *</label>
+                    <div className="border-2 border-dashed border-white/20 rounded-lg p-4 text-center">
+                      <Upload className="w-6 h-6 text-white/60 mx-auto mb-2" />
+                      <p className="text-white/60 mb-2 text-sm">Upload thumbnail image</p>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => e.target.files?.[0] && handleThumbnailUpload(e.target.files[0])}
+                        disabled={uploadingImages}
+                        className="max-w-xs mx-auto"
+                      />
+                    </div>
+                    {newProject.thumbnail_url && (
+                      <div className="relative w-24 h-24 mx-auto">
+                        <img 
+                          src={newProject.thumbnail_url} 
+                          alt="Thumbnail preview"
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                        <button
+                          onClick={() => setNewProject({...newProject, thumbnail_url: ''})}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Additional Images Upload */}
                   <div className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center">
                     <Upload className="w-8 h-8 text-white/60 mx-auto mb-2" />
-                    <p className="text-white/60 mb-4">Upload project images</p>
+                    <p className="text-white/60 mb-4">Upload additional project images</p>
                     <Input
                       type="file"
                       multiple
@@ -815,7 +894,7 @@ const AdminDashboard = () => {
                       onChange={(e) => setNewProject({...newProject, image_url: e.target.value})}
                     />
                     <Input
-                      placeholder="Thumbnail URL (optional)"
+                      placeholder="Thumbnail URL (backup)"
                       value={newProject.thumbnail_url}
                       onChange={(e) => setNewProject({...newProject, thumbnail_url: e.target.value})}
                     />
@@ -858,7 +937,7 @@ const AdminDashboard = () => {
                 <Button 
                   onClick={handleAddProject} 
                   className="glow-button flex-1"
-                  disabled={!newProject.title || !newProject.category_id || uploadingImages}
+                  disabled={!newProject.title || !newProject.category_id || !newProject.thumbnail_url || uploadingImages}
                 >
                   {uploadingImages ? 'Uploading...' : 'Add Project'}
                 </Button>

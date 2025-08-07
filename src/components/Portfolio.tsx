@@ -9,6 +9,7 @@ interface Project {
   title: string;
   description: string;
   image_url?: string;
+  thumbnail_url?: string;
   demo_url?: string;
   code_url?: string;
   instagram_url?: string;
@@ -29,6 +30,7 @@ const Portfolio = () => {
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchHomeProjects();
@@ -54,6 +56,21 @@ const Portfolio = () => {
       setProjects(data || []);
     }
     setLoading(false);
+  };
+
+  const toggleDescription = (projectId: string) => {
+    const newExpanded = new Set(expandedDescriptions);
+    if (newExpanded.has(projectId)) {
+      newExpanded.delete(projectId);
+    } else {
+      newExpanded.add(projectId);
+    }
+    setExpandedDescriptions(newExpanded);
+  };
+
+  const truncateText = (text: string, maxLength: number = 200) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + '...';
   };
 
   if (loading) {
@@ -94,9 +111,9 @@ const Portfolio = () => {
                       {/* Project Image */}
                       <div className="relative overflow-hidden">
                         <div className="aspect-video bg-white/5 flex items-center justify-center">
-                          {project.image_url ? (
+                          {project.thumbnail_url || project.image_url ? (
                             <img 
-                              src={project.image_url} 
+                              src={project.thumbnail_url || project.image_url} 
                               alt={project.title}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                               onError={(e) => {
@@ -134,9 +151,37 @@ const Portfolio = () => {
                           {project.title}
                         </h3>
                         
-                        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                          {project.description}
-                        </p>
+                        <div className="text-sm text-muted-foreground mb-4">
+                          {expandedDescriptions.has(project.id) ? (
+                            <>
+                              {project.description}
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleDescription(project.id);
+                                }}
+                                className="text-primary ml-2 hover:underline"
+                              >
+                                Read less
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              {truncateText(project.description || '')}
+                              {project.description && project.description.length > 200 && (
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleDescription(project.id);
+                                  }}
+                                  className="text-primary ml-2 hover:underline"
+                                >
+                                  Read more
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </div>
 
                         {project.brand_name && (
                           <p className="text-sm text-accent mb-4">
@@ -169,9 +214,9 @@ const Portfolio = () => {
                   <div className="grid md:grid-cols-2 gap-8">
                     {/* Project Image */}
                     <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center">
-                      {project.image_url ? (
+                      {project.thumbnail_url || project.image_url ? (
                         <img 
-                          src={project.image_url} 
+                          src={project.thumbnail_url || project.image_url} 
                           alt={project.title}
                           className="w-full h-full object-cover rounded-xl"
                         />
