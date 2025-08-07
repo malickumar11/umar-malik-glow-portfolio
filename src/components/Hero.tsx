@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Instagram, Linkedin, Twitter, ArrowRight } from 'lucide-react';
+import { Instagram, Linkedin, Twitter, Github, Youtube, Mail, ArrowRight } from 'lucide-react';
 import profileImage from '@/assets/profile-umar.jpg';
 
 const Hero = () => {
@@ -106,15 +106,52 @@ const Hero = () => {
 
         {/* Social Media Icons */}
         <div className="mb-8 animate-fade-in">
-          <div className="flex justify-center space-x-6">
-            <a href="#" className="group p-3 rounded-full glass-card hover:scale-110 transition-all duration-300">
+          <div className="flex justify-center space-x-4">
+            <a 
+              href="https://instagram.com/your_username" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group p-3 rounded-full glass-card hover:scale-110 transition-all duration-300"
+            >
               <Instagram className="w-5 h-5 group-hover:text-primary transition-colors" />
             </a>
-            <a href="#" className="group p-3 rounded-full glass-card hover:scale-110 transition-all duration-300">
+            <a 
+              href="https://linkedin.com/in/your_username" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group p-3 rounded-full glass-card hover:scale-110 transition-all duration-300"
+            >
               <Linkedin className="w-5 h-5 group-hover:text-accent transition-colors" />
             </a>
-            <a href="#" className="group p-3 rounded-full glass-card hover:scale-110 transition-all duration-300">
+            <a 
+              href="https://twitter.com/your_username" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group p-3 rounded-full glass-card hover:scale-110 transition-all duration-300"
+            >
               <Twitter className="w-5 h-5 group-hover:text-primary transition-colors" />
+            </a>
+            <a 
+              href="https://github.com/your_username" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group p-3 rounded-full glass-card hover:scale-110 transition-all duration-300"
+            >
+              <Github className="w-5 h-5 group-hover:text-accent transition-colors" />
+            </a>
+            <a 
+              href="https://youtube.com/your_channel" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group p-3 rounded-full glass-card hover:scale-110 transition-all duration-300"
+            >
+              <Youtube className="w-5 h-5 group-hover:text-primary transition-colors" />
+            </a>
+            <a 
+              href="mailto:your.email@example.com" 
+              className="group p-3 rounded-full glass-card hover:scale-110 transition-all duration-300"
+            >
+              <Mail className="w-5 h-5 group-hover:text-accent transition-colors" />
             </a>
           </div>
         </div>

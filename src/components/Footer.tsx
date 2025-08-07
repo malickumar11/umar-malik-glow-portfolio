@@ -1,4 +1,4 @@
-import { Instagram, Linkedin, Twitter } from 'lucide-react';
+import { Instagram, Linkedin, Twitter, Github, Youtube, Mail } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -17,27 +17,58 @@ const Footer = () => {
           </div>
 
           {/* Social Links */}
-          <div className="flex space-x-4">
+          <div className="flex space-x-3">
             <a 
-              href="#" 
+              href="https://instagram.com/your_username" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 rounded-full glass-card hover:scale-110 transition-all duration-300 group"
               aria-label="Instagram"
             >
               <Instagram className="w-4 h-4 group-hover:text-primary transition-colors" />
             </a>
             <a 
-              href="#" 
+              href="https://linkedin.com/in/your_username" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 rounded-full glass-card hover:scale-110 transition-all duration-300 group"
               aria-label="LinkedIn"
             >
               <Linkedin className="w-4 h-4 group-hover:text-accent transition-colors" />
             </a>
             <a 
-              href="#" 
+              href="https://twitter.com/your_username" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 rounded-full glass-card hover:scale-110 transition-all duration-300 group"
               aria-label="Twitter"
             >
               <Twitter className="w-4 h-4 group-hover:text-primary transition-colors" />
+            </a>
+            <a 
+              href="https://github.com/your_username" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-full glass-card hover:scale-110 transition-all duration-300 group"
+              aria-label="GitHub"
+            >
+              <Github className="w-4 h-4 group-hover:text-accent transition-colors" />
+            </a>
+            <a 
+              href="https://youtube.com/your_channel" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-full glass-card hover:scale-110 transition-all duration-300 group"
+              aria-label="YouTube"
+            >
+              <Youtube className="w-4 h-4 group-hover:text-primary transition-colors" />
+            </a>
+            <a 
+              href="mailto:your.email@example.com" 
+              className="p-2 rounded-full glass-card hover:scale-110 transition-all duration-300 group"
+              aria-label="Email"
+            >
+              <Mail className="w-4 h-4 group-hover:text-accent transition-colors" />
             </a>
           </div>
         </div>
@@ -50,16 +81,10 @@ const Footer = () => {
             </p>
             <div className="flex gap-4">
               <button 
-                onClick={() => window.location.href = '/admin-signup'}
-                className="text-xs text-muted-foreground hover:text-primary transition-colors opacity-50 hover:opacity-100"
-              >
-                Admin Setup
-              </button>
-              <button 
                 onClick={() => window.location.href = '/admin-login'}
                 className="text-xs text-muted-foreground hover:text-primary transition-colors opacity-50 hover:opacity-100"
               >
-                Admin Login
+                Admin
               </button>
             </div>
           </div>

@@ -15,6 +15,7 @@ interface Project {
   title: string;
   description: string;
   image_url?: string;
+  thumbnail_url?: string;
   demo_url?: string;
   code_url?: string;
   instagram_url?: string;
@@ -23,6 +24,7 @@ interface Project {
   is_featured: boolean;
   category_id: string;
   created_at: string;
+  project_url?: string;
   project_categories: {
     name: string;
     slug: string;
@@ -42,6 +44,7 @@ const Portfolio = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAddProject, setShowAddProject] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -49,13 +52,15 @@ const Portfolio = () => {
     title: '',
     description: '',
     image_url: '',
+    thumbnail_url: '',
     demo_url: '',
     code_url: '',
     instagram_url: '',
     youtube_views: 0,
     brand_name: '',
     category_id: '',
-    is_featured: false
+    is_featured: false,
+    project_url: ''
   });
 
   useEffect(() => {
@@ -159,13 +164,15 @@ const Portfolio = () => {
         title: '',
         description: '',
         image_url: '',
+        thumbnail_url: '',
         demo_url: '',
         code_url: '',
         instagram_url: '',
         youtube_views: 0,
         brand_name: '',
         category_id: '',
-        is_featured: false
+        is_featured: false,
+        project_url: ''
       });
       fetchProjects();
     }
@@ -190,6 +197,65 @@ const Portfolio = () => {
       });
       fetchProjects();
     }
+  };
+
+  const handleEditProject = async () => {
+    if (!editingProject || !editingProject.title || !editingProject.category_id) {
+      toast({
+        title: "Error",
+        description: "Please fill in required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const { error } = await supabase
+      .from('projects')
+      .update({
+        title: editingProject.title,
+        description: editingProject.description,
+        image_url: editingProject.image_url,
+        thumbnail_url: editingProject.thumbnail_url,
+        demo_url: editingProject.demo_url,
+        code_url: editingProject.code_url,
+        instagram_url: editingProject.instagram_url,
+        youtube_views: editingProject.youtube_views,
+        brand_name: editingProject.brand_name,
+        category_id: editingProject.category_id,
+        is_featured: editingProject.is_featured,
+        project_url: editingProject.project_url
+      })
+      .eq('id', editingProject.id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update project",
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Project updated successfully"
+      });
+      setEditingProject(null);
+      fetchProjects();
+    }
+  };
+
+  const toggleDescription = (projectId: string) => {
+    const newExpanded = new Set(expandedDescriptions);
+    if (newExpanded.has(projectId)) {
+      newExpanded.delete(projectId);
+    } else {
+      newExpanded.add(projectId);
+    }
+    setExpandedDescriptions(newExpanded);
+  };
+
+  const truncateText = (text: string, maxLength: number = 200) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + '...';
   };
 
   const filteredProjects = selectedCategory === 'all' 
@@ -301,9 +367,37 @@ const Portfolio = () => {
                       {project.title}
                     </h3>
                     
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                      {project.description}
-                    </p>
+                    <div className="text-sm text-muted-foreground mb-4">
+                      {expandedDescriptions.has(project.id) ? (
+                        <>
+                          {project.description}
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleDescription(project.id);
+                            }}
+                            className="text-primary ml-2 hover:underline"
+                          >
+                            Read less
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          {truncateText(project.description || '')}
+                          {project.description && project.description.length > 200 && (
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDescription(project.id);
+                              }}
+                              className="text-primary ml-2 hover:underline"
+                            >
+                              Read more
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
 
                     {project.brand_name && (
                       <p className="text-sm text-accent mb-4">
@@ -320,21 +414,44 @@ const Portfolio = () => {
                     {/* Action Buttons */}
                     <div className="flex gap-2">
                       {project.demo_url && (
-                        <Button size="sm" className="glow-button flex-1">
+                        <Button 
+                          size="sm" 
+                          className="glow-button flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(project.demo_url, '_blank');
+                          }}
+                        >
                           <ExternalLink className="w-3 h-3 mr-1" />
                           Demo
                         </Button>
                       )}
                       {project.code_url && (
-                        <Button size="sm" variant="outline" className="glass-card border-white/20 flex-1">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="glass-card border-white/20 flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(project.code_url, '_blank');
+                          }}
+                        >
                           <Github className="w-3 h-3 mr-1" />
                           Code
                         </Button>
                       )}
-                      {project.instagram_url && (
-                        <Button size="sm" variant="outline" className="glass-card border-white/20 flex-1">
-                          <Instagram className="w-3 h-3 mr-1" />
-                          Reel
+                      {project.project_url && (
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="glass-card border-white/20 flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(project.project_url, '_blank');
+                          }}
+                        >
+                          <ExternalLink className="w-3 h-3 mr-1" />
+                          Link
                         </Button>
                       )}
                     </div>
@@ -383,6 +500,11 @@ const Portfolio = () => {
                 onChange={(e) => setNewProject({...newProject, image_url: e.target.value})}
               />
               <Input
+                placeholder="Thumbnail URL"
+                value={newProject.thumbnail_url}
+                onChange={(e) => setNewProject({...newProject, thumbnail_url: e.target.value})}
+              />
+              <Input
                 placeholder="Demo URL"
                 value={newProject.demo_url}
                 onChange={(e) => setNewProject({...newProject, demo_url: e.target.value})}
@@ -396,6 +518,11 @@ const Portfolio = () => {
                 placeholder="Instagram URL"
                 value={newProject.instagram_url}
                 onChange={(e) => setNewProject({...newProject, instagram_url: e.target.value})}
+              />
+              <Input
+                placeholder="Project URL"
+                value={newProject.project_url}
+                onChange={(e) => setNewProject({...newProject, project_url: e.target.value})}
               />
               <Input
                 placeholder="Brand Name"
@@ -421,6 +548,97 @@ const Portfolio = () => {
                 </Button>
               </div>
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Project Modal */}
+        <Dialog open={!!editingProject} onOpenChange={() => setEditingProject(null)}>
+          <DialogContent className="max-w-2xl glass-card border-white/20">
+            <DialogHeader>
+              <DialogTitle className="text-white">Edit Project</DialogTitle>
+            </DialogHeader>
+            {editingProject && (
+              <div className="space-y-4">
+                <Input
+                  placeholder="Project Title"
+                  value={editingProject.title}
+                  onChange={(e) => setEditingProject({...editingProject, title: e.target.value})}
+                />
+                <Textarea
+                  placeholder="Description"
+                  value={editingProject.description}
+                  onChange={(e) => setEditingProject({...editingProject, description: e.target.value})}
+                />
+                <Select 
+                  value={editingProject.category_id}
+                  onValueChange={(value) => setEditingProject({...editingProject, category_id: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  placeholder="Image URL"
+                  value={editingProject.image_url || ''}
+                  onChange={(e) => setEditingProject({...editingProject, image_url: e.target.value})}
+                />
+                <Input
+                  placeholder="Thumbnail URL"
+                  value={editingProject.thumbnail_url || ''}
+                  onChange={(e) => setEditingProject({...editingProject, thumbnail_url: e.target.value})}
+                />
+                <Input
+                  placeholder="Demo URL"
+                  value={editingProject.demo_url || ''}
+                  onChange={(e) => setEditingProject({...editingProject, demo_url: e.target.value})}
+                />
+                <Input
+                  placeholder="Code URL"
+                  value={editingProject.code_url || ''}
+                  onChange={(e) => setEditingProject({...editingProject, code_url: e.target.value})}
+                />
+                <Input
+                  placeholder="Instagram URL"
+                  value={editingProject.instagram_url || ''}
+                  onChange={(e) => setEditingProject({...editingProject, instagram_url: e.target.value})}
+                />
+                <Input
+                  placeholder="Project URL"
+                  value={editingProject.project_url || ''}
+                  onChange={(e) => setEditingProject({...editingProject, project_url: e.target.value})}
+                />
+                <Input
+                  placeholder="Brand Name"
+                  value={editingProject.brand_name || ''}
+                  onChange={(e) => setEditingProject({...editingProject, brand_name: e.target.value})}
+                />
+                <Input
+                  type="number"
+                  placeholder="YouTube Views"
+                  value={editingProject.youtube_views || 0}
+                  onChange={(e) => setEditingProject({...editingProject, youtube_views: parseInt(e.target.value) || 0})}
+                />
+                <div className="flex gap-4">
+                  <Button onClick={handleEditProject} className="glow-button flex-1">
+                    Update Project
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setEditingProject(null)}
+                    className="glass-card border-white/20 flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </div>
